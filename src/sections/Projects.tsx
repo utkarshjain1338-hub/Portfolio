@@ -1,35 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 36 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
+import '../styles/global.css';
 
 const PROJECTS = [
   {
     id: 'PRJ_001',
-    name: 'Event Analyzer',
+    name: 'EVENT ANALYZER',
     domain: 'AI / SYSTEMS',
-    description:
-      'A context-aware study assistant that observes computer activity, learns the difference between productive and distracting behavior, and progressively intervenes when focus is lost.',
-    tags: ['python', 'machine learning', 'computer vision', 'os integration'],
-    status: 'WIP',
-    color: '#00d4ff',
+    description: 'A context-aware study assistant that observes computer activity, learns the difference between productive and distracting behavior, and progressively intervenes when focus is lost.',
+    tags: ['PYTHON', 'ML', 'CV', 'OS'],
+    theme: 'organic'
   },
   {
     id: 'PRJ_002',
-    name: 'PactFlow',
+    name: 'PACTFLOW',
     domain: 'BACKEND / SYSTEMS',
-    description:
-      'A software system built around backend services, APIs, databases, authentication, and application infrastructure.',
-    tags: ['java', 'spring boot', 'postgresql', 'next.js'],
-    status: 'WIP',
-    color: '#00ff88',
+    description: 'A software system built around backend services, APIs, databases, authentication, and application infrastructure.',
+    tags: ['JAVA', 'SPRING BOOT', 'POSTGRESQL', 'NEXT.JS'],
+    theme: 'structured'
   },
   {
     id: 'PRJ_003',
@@ -37,66 +25,90 @@ const PROJECTS = [
     domain: 'AI / ML',
     description: 'The next experiment is still taking shape.',
     tags: [],
-    status: 'NOT STARTED',
-    color: '#7b2fff',
-    classified: true,
+    theme: 'empty'
   },
 ];
 
 export const Projects: React.FC = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: false, margin: '-100px' });
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    // Dispatch global event for Three.js background to listen to
+    if (inView) {
+      window.dispatchEvent(new CustomEvent('project-theme', { detail: PROJECTS[activeIdx].theme }));
+    } else {
+      window.dispatchEvent(new CustomEvent('project-theme', { detail: 'default' }));
+    }
+  }, [activeIdx, inView]);
+
+  const activePrj = PROJECTS[activeIdx];
 
   return (
-    <section id="projects" className="section projects-section" aria-labelledby="projects-heading">
-      <div className="container" ref={ref}>
-        <motion.div className="section-label" variants={fadeUp} custom={0} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
+    <section id="projects" className="section projects-section" ref={ref}>
+      <div className="container">
+        
+        <motion.div className="section-label" initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
           02 — PROJECTS
         </motion.div>
-        <motion.h2 id="projects-heading" className="section-heading" variants={fadeUp} custom={1} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          Things I've built to learn something.
-        </motion.h2>
-        <motion.p className="section-subtext" variants={fadeUp} custom={2} initial="hidden" animate={inView ? 'visible' : 'hidden'}>
-          Projects are where ideas become systems — and where assumptions usually meet reality.
-        </motion.p>
-
-        <div className="projects-grid">
-          {PROJECTS.map((prj, i) => (
-            <motion.article
-              key={prj.id}
-              className={`project-card ${prj.classified ? 'project-card--classified' : ''}`}
-              id={`prj-${prj.id.toLowerCase().replace('_', '-')}`}
-              aria-labelledby={`prj-name-${i}`}
-              variants={fadeUp}
-              custom={i + 3}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-              whileHover={{ y: -6, transition: { duration: 0.3 } }}
-              style={{ '--node-color': prj.color } as React.CSSProperties}
+        
+        <div className="grid-12">
+          {/* Top Row: Title */}
+          <div style={{ gridColumn: '1 / -1', paddingBottom: '4vh' }}>
+            <motion.h2 
+              className="section-heading" 
+              style={{ fontSize: 'clamp(32px, 7vw, 100px)', lineHeight: 0.9 }}
+              initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1 }}
             >
-              <div className="prj-top">
-                <span className="prj-id">[ {prj.id} ]</span>
-                <span className={`prj-status prj-status--${prj.status === 'WIP' ? 'wip' : 'ns'}`}>
-                  [ {prj.status} ]
-                </span>
-              </div>
-              <div className="prj-domain" style={{ color: prj.color }}>{prj.domain}</div>
-              <h3 id={`prj-name-${i}`} className="prj-name">{prj.name}</h3>
-              <p className="prj-desc">{prj.description}</p>
-              {prj.tags.length > 0 && (
-                <div className="prj-tags" aria-label="Technologies used">
-                  {prj.tags.map((tag) => (
-                    <span key={tag} className="prj-tag">[ {tag} ]</span>
+              BUILT TO<br/>UNDERSTAND.
+            </motion.h2>
+          </div>
+          
+          {/* Bottom Row: Navigator */}
+          <div style={{ gridColumn: '1 / -1' }}>
+            <motion.div 
+              className="project-navigator"
+              initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
+            >
+              {/* Massive Outline Box */}
+              <div className="project-display" style={{ minHeight: '600px' }}>
+                <div className="project-domain">{activePrj.domain}</div>
+                <h3 className="project-title">{activePrj.name}</h3>
+                <p className="project-desc" style={{ maxWidth: '800px', fontSize: '1.25rem' }}>{activePrj.description}</p>
+                
+                <div className="project-tags">
+                  {activePrj.tags.map((tag, i) => (
+                    <React.Fragment key={tag}>
+                      {i > 0 && <span className="tag-sep">·</span>}
+                      <span>{tag}</span>
+                    </React.Fragment>
                   ))}
                 </div>
-              )}
-              {prj.classified && (
-                <div className="classified-overlay" aria-hidden="true">
-                  <span className="classified-text">INITIALIZING</span>
+              </div>
+
+              {/* Controls */}
+              <div className="project-controls">
+                <div className="project-counter">
+                  0{activeIdx + 1} / 0{PROJECTS.length}
                 </div>
-              )}
-            </motion.article>
-          ))}
+                <div className="project-arrows">
+                  <button 
+                    onClick={() => setActiveIdx(p => Math.max(0, p - 1))}
+                    disabled={activeIdx === 0}
+                    onMouseEnter={() => window.dispatchEvent(new CustomEvent('accelerate', { detail: true }))}
+                    onMouseLeave={() => window.dispatchEvent(new CustomEvent('accelerate', { detail: false }))}
+                  >←</button>
+                  <button 
+                    onClick={() => setActiveIdx(p => Math.min(PROJECTS.length - 1, p + 1))}
+                    disabled={activeIdx === PROJECTS.length - 1}
+                    onMouseEnter={() => window.dispatchEvent(new CustomEvent('accelerate', { detail: true }))}
+                    onMouseLeave={() => window.dispatchEvent(new CustomEvent('accelerate', { detail: false }))}
+                  >→</button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

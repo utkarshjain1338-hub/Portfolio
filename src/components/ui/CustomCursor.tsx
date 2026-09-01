@@ -75,7 +75,7 @@ export const CustomCursor: React.FC = () => {
           pointerEvents: 'none',
           zIndex: 9999,
           transition: 'background 0.2s',
-          boxShadow: `0 0 8px ${dotColor}`,
+          boxShadow: `0 0 12px 2px ${dotColor}`,
           mixBlendMode: 'screen',
         }}
       />
@@ -93,7 +93,7 @@ export const CustomCursor: React.FC = () => {
           zIndex: 9998,
           transition: 'width 0.3s cubic-bezier(0.23,1,0.32,1), height 0.3s cubic-bezier(0.23,1,0.32,1), border-color 0.2s',
           opacity: cursorType === 'node' ? 0.9 : 0.6,
-          boxShadow: cursorType === 'node' ? `0 0 16px ${ringColor}44` : 'none',
+          boxShadow: `0 0 20px 4px ${ringColor}66, inset 0 0 10px ${ringColor}33`,
           animation: cursorType === 'node' ? 'cursor-pulse 1.4s ease-in-out infinite' : 'none',
         }}
       />

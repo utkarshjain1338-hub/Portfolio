@@ -6,20 +6,22 @@ import { setCameraState } from './cameraStore';
 gsap.registerPlugin(ScrollTrigger);
 
 let lenis: Lenis | null = null;
+const scrollListeners = new Set<(progress: number, scrollY: number) => void>();
 
 export function initScroll() {
-  // Init Lenis smooth scroll (v1.1.x API)
   lenis = new Lenis({
-    lerp: 0.072,          // silky drag — lower = more float
+    lerp:        0.072,
     smoothWheel: true,
-    syncTouch: false,
+    syncTouch:   false,
   });
 
   // Bridge Lenis scroll events → ScrollTrigger
-  lenis.on('scroll', ScrollTrigger.update);
+  lenis.on('scroll', (e: any) => {
+    ScrollTrigger.update();
+    scrollListeners.forEach(fn => fn(e.progress, e.scroll));
+  });
 
   // Tell ScrollTrigger to use Lenis's virtual scroll position
-  // so camera triggers fire at the right moments
   ScrollTrigger.scrollerProxy(document.body, {
     scrollTop(value?: number) {
       if (value !== undefined && lenis) {
@@ -28,19 +30,13 @@ export function initScroll() {
       return lenis?.scroll ?? 0;
     },
     getBoundingClientRect() {
-      return {
-        top: 0, left: 0,
-        width: window.innerWidth,
-        height: window.innerHeight,
-      };
+      return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
     },
     pinType: 'transform',
   });
 
-  // Drive Lenis via GSAP ticker so they share the same clock
-  gsap.ticker.add((time) => {
-    lenis?.raf(time * 1000);
-  });
+  // Drive Lenis via GSAP ticker (shared clock)
+  gsap.ticker.add((time) => lenis?.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 
   return lenis;
@@ -50,28 +46,34 @@ export function destroyScroll() {
   lenis?.destroy();
   lenis = null;
   ScrollTrigger.killAll();
+  scrollListeners.clear();
 }
 
-// Camera states mapped to overall scroll progress (0 → 1)
+// 7 sections → 7 camera states → 6 transitions
 export function setupCameraScrollTrigger(scrollContainer: HTMLElement) {
-  const totalTransitions = 5; // 6 states, 5 transitions
+  const TRANSITIONS = 6;
 
   ScrollTrigger.create({
-    trigger: scrollContainer,
+    trigger:  scrollContainer,
     scroller: document.body,
-    start: 'top top',
-    end: 'bottom bottom',
-    scrub: 2.2,           // higher = silkier camera lag
+    start:    'top top',
+    end:      'bottom bottom',
+    scrub:    2.4,
     onUpdate: (self) => {
-      const progress = self.progress;
-      const stateProgress = progress * totalTransitions;
-      const stateIndex = Math.floor(Math.min(stateProgress, totalTransitions - 0.001));
-      const t = stateProgress - stateIndex;
-      setCameraState(stateIndex, t);
+      const p     = self.progress;
+      const sp    = p * TRANSITIONS;
+      const index = Math.floor(Math.min(sp, TRANSITIONS - 0.001));
+      const t     = sp - index;
+      setCameraState(index, t, p);
     },
   });
 }
 
 export function getLenis() {
   return lenis;
+}
+
+export function onScrollUpdate(callback: (progress: number, scrollY: number) => void) {
+  scrollListeners.add(callback);
+  return () => scrollListeners.delete(callback);
 }

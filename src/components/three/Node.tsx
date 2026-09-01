@@ -1,23 +1,54 @@
+/**
+ * Node — individual system node with three physical layers:
+ *   1. Core — dark metallic icosahedron with emissive rim
+ *   2. Wireframe shell — slowly rotating outer cage
+ *   3. Energy field — Fresnel glow sphere reacting to activity
+ *
+ * Responds to:
+ *   - Hover (from pointer events)
+ *   - Autonomous system activity (from autonomousSystem.nodeActivity)
+ *   - Camera's active section (from cameraStore.activeNode)
+ */
 import React, { useRef, useState, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
-import {
-  Mesh,
-  MeshStandardMaterial,
-  MeshBasicMaterial,
-  IcosahedronGeometry,
-  Color,
-  Group,
-} from 'three';
+import * as THREE from 'three';
 import { cameraStore } from '../../lib/cameraStore';
+import { autonomousSystem } from '../../lib/autonomousSystem';
+
+/* ── Fresnel glow shader ── */
+const FRESNEL_VERT = /* glsl */`
+  varying vec3 vNormal;
+  varying vec3 vViewPos;
+  void main() {
+    vNormal  = normalize(normalMatrix * normal);
+    vec4 mv  = modelViewMatrix * vec4(position, 1.0);
+    vViewPos = -mv.xyz;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const FRESNEL_FRAG = /* glsl */`
+  uniform vec3  uColor;
+  uniform float uIntensity;
+  varying vec3  vNormal;
+  varying vec3  vViewPos;
+  void main() {
+    vec3  n       = normalize(vNormal);
+    vec3  v       = normalize(vViewPos);
+    float fresnel = 1.0 - abs(dot(n, v));
+    fresnel       = pow(fresnel, 2.2);
+    gl_FragColor  = vec4(uColor, fresnel * uIntensity);
+  }
+`;
 
 export interface NodeData {
-  id: string;
-  label: string;
+  id:       string;
+  label:    string;
   sublabel?: string;
   position: [number, number, number];
-  color: string;
-  isHub?: boolean;
+  color:    string;
+  isHub?:   boolean;
 }
 
 interface NodeProps extends NodeData {
@@ -25,78 +56,95 @@ interface NodeProps extends NodeData {
 }
 
 export const Node: React.FC<NodeProps> = ({
-  id,
-  label,
-  sublabel,
-  position,
-  color,
-  isHub = false,
-  onHover,
+  id, label, sublabel, position, color, isHub = false, onHover,
 }) => {
-  const groupRef = useRef<Group>(null);
-  const innerRef = useRef<Mesh>(null);
-  const outerRef = useRef<Mesh>(null);
+  const groupRef   = useRef<THREE.Group>(null);
+  const innerRef   = useRef<THREE.Mesh>(null);
+  const outerRef   = useRef<THREE.Mesh>(null);
+  const fresnelRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
-  const innerGeo = useMemo(
-    () => new IcosahedronGeometry(isHub ? 0.28 : 0.18, 1),
-    [isHub]
-  );
-  const outerGeo = useMemo(
-    () => new IcosahedronGeometry(isHub ? 0.52 : 0.38, 1),
-    [isHub]
-  );
+  /* ── Geometry (memoised) ── */
+  const innerGeo   = useMemo(() => new THREE.IcosahedronGeometry(isHub ? 0.24 : 0.15, 2), [isHub]);
+  const outerGeo   = useMemo(() => new THREE.IcosahedronGeometry(isHub ? 0.50 : 0.36, 1), [isHub]);
+  const fresnelGeo = useMemo(() => new THREE.SphereGeometry(isHub ? 0.68 : 0.50, 24, 24), [isHub]);
 
-  const innerMat = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color,
-        emissive: color,
-        emissiveIntensity: 0.8,
-        metalness: 0.4,
-        roughness: 0.3,
-        toneMapped: false,
-      }),
-    [color]
-  );
+  /* ── Materials (memoised) ── */
+  const innerMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color:            '#070d18',
+    emissive:         color,
+    emissiveIntensity: 0.7,
+    metalness:         0.85,
+    roughness:         0.12,
+    toneMapped:        false,
+  }), [color]);
 
-  const outerMat = useMemo(
-    () =>
-      new MeshBasicMaterial({
-        color,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.25,
-        toneMapped: false,
-      }),
-    [color]
-  );
+  const outerMat = useMemo(() => new THREE.MeshBasicMaterial({
+    color,
+    wireframe:   true,
+    transparent: true,
+    opacity:     0.18,
+    toneMapped:  false,
+  }), [color]);
 
-  const isActive = useCallback(() => {
-    return cameraStore.activeNode === id;
-  }, [id]);
+  const fresnelMat = useMemo(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uColor:     { value: new THREE.Color(color) },
+      uIntensity: { value: 0.55 },
+    },
+    vertexShader:   FRESNEL_VERT,
+    fragmentShader: FRESNEL_FRAG,
+    transparent:    true,
+    depthWrite:     false,
+    side:           THREE.FrontSide,
+    blending:       THREE.AdditiveBlending,
+  }), [color]);
 
+  const isActive = useCallback(() => cameraStore.activeNode === id, [id]);
+
+  /* ── Per-frame animation ── */
   useFrame((_, delta) => {
-    if (!groupRef.current || !innerRef.current || !outerRef.current) return;
+    if (!groupRef.current || !innerRef.current || !outerRef.current || !fresnelRef.current) return;
 
+    const hov    = hovered;
     const active = isActive();
-    const targetScale = hovered ? 1.35 : active ? 1.2 : 1.0;
-    const currentScale = groupRef.current.scale.x;
-    const newScale = currentScale + (targetScale - currentScale) * delta * 4;
-    groupRef.current.scale.setScalar(newScale);
+    const autonomous = autonomousSystem.nodeActivity[id as keyof typeof autonomousSystem.nodeActivity] ?? 0;
 
-    // Breathing animation on inner core
-    const breathe = Math.sin(Date.now() * 0.001 * (isHub ? 0.7 : 1.0)) * 0.04;
-    innerRef.current.scale.setScalar(1 + breathe);
+    // Combined activity level
+    const activity = Math.max(hov ? 1 : 0, active ? 0.7 : 0, autonomous);
 
-    // Outer shell rotation
-    outerRef.current.rotation.x += delta * (hovered ? 0.8 : active ? 0.5 : 0.25);
-    outerRef.current.rotation.y += delta * (hovered ? 1.0 : active ? 0.65 : 0.35);
+    // Scale
+    const targetScale = 1 + activity * 0.32;
+    const curScale    = groupRef.current.scale.x;
+    groupRef.current.scale.setScalar(curScale + (targetScale - curScale) * delta * 4.5);
+
+    // Inner breathing + activity pulse
+    const breathe = Math.sin(Date.now() * 0.001 * (isHub ? 0.6 : 0.9)) * 0.035;
+    const pulse   = autonomous > 0.5
+      ? Math.sin(Date.now() * 0.008) * 0.08
+      : 0;
+    innerRef.current.scale.setScalar(1 + breathe + pulse);
+
+    // Outer wireframe rotation — spins faster when active
+    const spinBase  = isHub ? 0.12 : 0.18;
+    const spinBoost = activity * 0.7;
+    outerRef.current.rotation.x += delta * (spinBase + spinBoost);
+    outerRef.current.rotation.y += delta * (spinBase * 1.4 + spinBoost * 0.8);
+    outerRef.current.rotation.z += delta * (spinBase * 0.7);
 
     // Emissive intensity
-    const mat = innerRef.current.material as MeshStandardMaterial;
-    const targetEmissive = hovered ? 2.5 : active ? 1.8 : 0.8;
-    mat.emissiveIntensity += (targetEmissive - mat.emissiveIntensity) * delta * 4;
+    const mat = innerRef.current.material as THREE.MeshStandardMaterial;
+    const targetEmissive = 0.6 + activity * 2.2;
+    mat.emissiveIntensity += (targetEmissive - mat.emissiveIntensity) * delta * 5;
+
+    // Outer wireframe opacity
+    const outerM = outerRef.current.material as THREE.MeshBasicMaterial;
+    outerM.opacity += ((0.12 + activity * 0.35) - outerM.opacity) * delta * 4;
+
+    // Fresnel intensity
+    const fresnelU = (fresnelRef.current.material as THREE.ShaderMaterial).uniforms;
+    const targetFresnel = 0.4 + activity * 1.2;
+    fresnelU.uIntensity.value += (targetFresnel - fresnelU.uIntensity.value) * delta * 4;
   });
 
   return (
@@ -108,58 +156,51 @@ export const Node: React.FC<NodeProps> = ({
         setHovered(true);
         cameraStore.hoveredNode = id;
         onHover?.(id);
-        document.body.style.cursor = 'none';
-        // Dispatch custom event for cursor
         window.dispatchEvent(new CustomEvent('node-hover', { detail: { active: true } }));
       }}
       onPointerLeave={() => {
         setHovered(false);
         cameraStore.hoveredNode = null;
         onHover?.(null);
-        document.body.style.cursor = 'none';
         window.dispatchEvent(new CustomEvent('node-hover', { detail: { active: false } }));
       }}
     >
-      {/* Inner core */}
-      <mesh ref={innerRef} geometry={innerGeo} material={innerMat} />
+      {/* Energy field — Fresnel glow */}
+      <mesh ref={fresnelRef} geometry={fresnelGeo} material={fresnelMat} />
 
       {/* Outer wireframe shell */}
       <mesh ref={outerRef} geometry={outerGeo} material={outerMat} />
 
-      {/* Point light for glow */}
-      <pointLight
-        color={color}
-        intensity={hovered ? 2 : 0.6}
-        distance={2.5}
-        decay={2}
-      />
+      {/* Core */}
+      <mesh ref={innerRef} geometry={innerGeo} material={innerMat} />
+
+      {/* Node point light */}
+      <pointLight color={color} intensity={hovered ? 1.8 : 0.45} distance={2.2} decay={2} />
 
       {/* Label */}
       <Html
-        position={[0, (isHub ? 0.72 : 0.58), 0]}
+        position={[0, (isHub ? 0.85 : 0.65), 0]}
         center
-        distanceFactor={6}
+        distanceFactor={7}
         zIndexRange={[0, 0]}
         style={{ pointerEvents: 'none' }}
       >
-        <div
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: isHub ? '10px' : '8px',
-            fontWeight: 500,
-            color: hovered ? '#ffffff' : color,
-            letterSpacing: '0.12em',
-            textAlign: 'center',
-            opacity: hovered ? 1 : 0.75,
-            transition: 'opacity 0.3s, color 0.3s',
-            whiteSpace: 'nowrap',
-            textShadow: `0 0 12px ${color}`,
-            userSelect: 'none',
-          }}
-        >
+        <div style={{
+          fontFamily:  "'JetBrains Mono', monospace",
+          fontSize:    isHub ? '9px' : '7.5px',
+          fontWeight:  600,
+          color:       hovered ? '#ffffff' : color,
+          letterSpacing: '0.14em',
+          textAlign:   'center',
+          whiteSpace:  'nowrap',
+          textShadow:  `0 0 10px ${color}`,
+          userSelect:  'none',
+          opacity:     hovered ? 1 : 0.72,
+          transition:  'opacity 0.3s, color 0.3s',
+        }}>
           {label}
           {sublabel && (
-            <div style={{ fontSize: '7px', opacity: 0.6, marginTop: '2px' }}>
+            <div style={{ fontSize: '6.5px', opacity: 0.55, marginTop: '2px' }}>
               {sublabel}
             </div>
           )}

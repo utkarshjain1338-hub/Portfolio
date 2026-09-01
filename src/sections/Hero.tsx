@@ -1,106 +1,83 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-
-const STATEMENT = 'Building systems to understand how they work.';
+import React, { useEffect } from 'react';
+import { motion, useMotionValue, useTransform, useScroll } from 'framer-motion';
+import '../styles/global.css';
 
 export const Hero: React.FC = () => {
-  const [typed, setTyped] = useState('');
-  const [showCursor, setShowCursor] = useState(true);
-  const indexRef = useRef(0);
-
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
   useEffect(() => {
-    const delay = setTimeout(() => {
-      const interval = setInterval(() => {
-        if (indexRef.current < STATEMENT.length) {
-          setTyped(STATEMENT.slice(0, indexRef.current + 1));
-          indexRef.current++;
-        } else {
-          clearInterval(interval);
-          // After typing, blink cursor then hide it slowly
-          setTimeout(() => setShowCursor(false), 2400);
-        }
-      }, 38);
-      return () => clearInterval(interval);
-    }, 1200);
-    return () => clearTimeout(delay);
-  }, []);
+    const handleMouseMove = (e: MouseEvent) => {
+      // Normalize from -1 to 1
+      mouseX.set((e.clientX / window.innerWidth) * 2 - 1);
+      mouseY.set((e.clientY / window.innerHeight) * 2 - 1);
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  const { scrollY } = useScroll();
+  
+  // Subtle Parallax
+  const utkarshX = useTransform(mouseX, [-1, 1], [-12, 12]);
+  const jainX = useTransform(mouseX, [-1, 1], [15, -15]);
+  const jainScrollY = useTransform(scrollY, [0, 1000], [0, -200]);
+  
+  // Combine mouse and scroll for JAIN
+  const combinedJainY = useTransform(() => jainScrollY.get() + (mouseY.get() * -8));
+  
+  const metaX = useTransform(mouseX, [-1, 1], [-4, 4]);
+  const metaY = useTransform(mouseY, [-1, 1], [-4, 4]);
 
   return (
-    <section id="hero" className="hero-section" aria-label="Introduction">
-      {/* Corner decorations */}
-      <div className="corner corner--tl" aria-hidden="true" />
-      <div className="corner corner--tr" aria-hidden="true" />
-      <div className="corner corner--bl" aria-hidden="true" />
-      <div className="corner corner--br" aria-hidden="true" />
-
-      {/* System bar */}
-      <motion.div
-        className="hero-sys-bar"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        aria-hidden="true"
-      >
-        <span className="sys-id">[ SYS_ID: UJ-001 ]</span>
-        <span className="sys-sep">│</span>
-        <span className="sys-status">
-          <span className="blink-dot" aria-hidden="true" />
-          [ SYSTEM: ONLINE ]
-        </span>
-      </motion.div>
-
-      {/* Main content */}
-      <div className="hero-content">
-        <motion.div
-          className="hero-domain"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          aria-label="Domain areas"
-        >
-          AI&nbsp;/&nbsp;ML&nbsp;&nbsp;•&nbsp;&nbsp;SYSTEMS&nbsp;&nbsp;•&nbsp;&nbsp;CYBERSECURITY&nbsp;&nbsp;•&nbsp;&nbsp;BACKEND
-        </motion.div>
-
-        <motion.h1
-          className="hero-name"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <span className="glitch" data-text="UTKARSH JAIN">UTKARSH JAIN</span>
-        </motion.h1>
-
-        <motion.p
-          className="hero-statement"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: 0.6 }}
-        >
-          <span className="typewriter-text">{typed}</span>
-          <span
-            className="cursor-blink"
-            aria-hidden="true"
-            style={{ opacity: showCursor ? 1 : 0, transition: 'opacity 0.8s' }}
+    <section id="hero" className="hero-section">
+      <div className="container hero-container">
+        <div className="grid-12 hero-grid">
+          
+          {/* Top metadata */}
+          <motion.div 
+            className="hero-meta" 
+            style={{ gridColumn: '8 / 12', x: metaX, y: metaY, zIndex: 10, paddingTop: '10vh' }}
           >
-            █
-          </span>
-        </motion.p>
+            AI / ML<br/>
+            SYSTEMS<br/>
+            OPEN SOURCE
+          </motion.div>
+
+          {/* Massive Display Name */}
+          <motion.div 
+            className="hero-name-part" 
+            style={{ gridColumn: '1 / 13', x: utkarshX, zIndex: 2, marginTop: '4vh' }}
+          >
+            UTKARSH
+          </motion.div>
+          
+          <motion.div 
+            className="hero-name-part" 
+            style={{ gridColumn: '2 / 13', x: jainX, y: combinedJainY, zIndex: 1 }}
+          >
+            JAIN
+          </motion.div>
+
+          {/* Bottom metadata */}
+          <motion.div 
+            className="hero-meta" 
+            style={{ gridColumn: '8 / 12', x: metaX, y: metaY, marginTop: '8vh', zIndex: 10 }}
+          >
+            EXPLORING HOW<br/>
+            COMPUTERS THINK,<br/>
+            BREAK, AND WORK.
+          </motion.div>
+
+        </div>
       </div>
 
-      {/* Scroll prompt */}
-      <motion.div
-        className="hero-scroll-prompt"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.2, duration: 0.8 }}
-        aria-label="Scroll to explore"
+      <motion.div 
+        className="hero-scroll" 
+        animate={{ opacity: [0.3, 1, 0.3], y: [0, 4, 0] }} 
+        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <span className="scroll-label">SCROLL TO EXPLORE</span>
-        <div className="scroll-chevrons" aria-hidden="true">
-          <span className="chevron">›</span>
-          <span className="chevron">›</span>
-          <span className="chevron">›</span>
-        </div>
+        SCROLL<br/>↓
       </motion.div>
     </section>
   );

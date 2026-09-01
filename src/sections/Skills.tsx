@@ -1,71 +1,48 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import '../styles/global.css';
 
 const SKILL_GROUPS = [
-  {
-    id: 'skills-programming',
-    name: 'PROGRAMMING',
-    color: '#00d4ff',
-    skills: ['python', 'c++', 'java', 'javascript', 'typescript'],
-  },
-  {
-    id: 'skills-ai',
-    name: 'AI / DATA',
-    color: '#7b2fff',
-    skills: ['numpy', 'pandas', 'matplotlib', 'scikit-learn', 'pytorch'],
-  },
-  {
-    id: 'skills-web',
-    name: 'WEB / BACKEND',
-    color: '#00ff88',
-    skills: ['react', 'next.js', 'spring boot', 'postgresql', 'rest apis'],
-  },
-  {
-    id: 'skills-systems',
-    name: 'SYSTEMS / SECURITY',
-    color: '#f0a500',
-    skills: ['linux', 'networking', 'git', 'bash', 'cybersecurity'],
-  },
+  { name: 'PROGRAMMING', skills: ['PYTHON', 'C++', 'JAVA', 'JAVASCRIPT', 'TYPESCRIPT'] },
+  { name: 'AI / DATA', skills: ['NUMPY', 'PANDAS', 'MATPLOTLIB', 'SCIKIT-LEARN', 'PYTORCH'] },
+  { name: 'WEB / BACKEND', skills: ['REACT', 'NEXT.JS', 'SPRING BOOT', 'POSTGRESQL', 'REST APIS'] },
+  { name: 'SYSTEMS / SECURITY', skills: ['LINUX', 'BASH', 'GIT', 'NETWORKING', 'CYBERSECURITY'] },
 ];
 
 export const Skills: React.FC = () => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
+  const inView = useInView(ref, { once: false, margin: '-100px' });
 
   return (
-    <section id="skills" className="section skills-section" aria-labelledby="skills-heading">
-      <div className="container" ref={ref}>
-        <motion.div className="section-label" initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}>05 — SKILLS</motion.div>
-        <motion.h2 id="skills-heading" className="section-heading" initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.1, duration: 0.7 }}>Tools currently in the toolbox.</motion.h2>
-        <motion.p className="section-subtext" initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2, duration: 0.6 }}>A working set, not a scoreboard.</motion.p>
-
-        <div className="skills-grid">
+    <section id="skills" className="skills-section" ref={ref}>
+      <div className="container">
+        <motion.div className="section-label" initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
+          05 — SKILLS
+        </motion.div>
+        
+        <div className="grid-12">
+          <div style={{ gridColumn: '1 / -1', paddingBottom: '4vh' }}>
+            <motion.h2 className="section-heading" initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
+              IN THE<br/>TOOLBOX.
+            </motion.h2>
+          </div>
+          
           {SKILL_GROUPS.map((group, gi) => (
-            <motion.div
-              key={group.id}
-              id={group.id}
-              className="skill-group"
-              initial={{ opacity: 0, y: 32 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: gi * 0.12 + 0.3, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <h3 className="skill-group-name" style={{ color: group.color }}>{group.name}</h3>
-              <ul className="skill-tags">
-                {group.skills.map((skill, si) => (
-                  <motion.li
-                    key={skill}
-                    className="skill-tag"
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ delay: gi * 0.12 + si * 0.06 + 0.4, duration: 0.4 }}
-                    whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
-                    style={{ '--tag-color': group.color } as React.CSSProperties}
-                  >
-                    [ {skill} ]
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
+            <div key={group.name} style={{ gridColumn: 'span 6', marginBottom: '2vw' }}>
+              <motion.div 
+                className="skill-block"
+                initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: gi * 0.15 + 0.1 }}
+              >
+                <div className="skill-cat-name">{group.name}</div>
+                <div className="skill-grid">
+                  {group.skills.map((skill) => (
+                    <div key={skill} className="skill-item">
+                      <span className="skill-text">{skill}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
           ))}
         </div>
       </div>
