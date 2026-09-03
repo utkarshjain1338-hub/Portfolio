@@ -15,7 +15,7 @@ export const StickyCard = React.forwardRef<HTMLDivElement, StickyCardProps>(({ i
   
   // Merge refs so both StickyCard and the parent can access the DOM node.
   const setRefs = (node: HTMLDivElement) => {
-    internalRef.current = node;
+    (internalRef as any).current = node;
     if (typeof externalRef === 'function') {
       externalRef(node);
     } else if (externalRef) {

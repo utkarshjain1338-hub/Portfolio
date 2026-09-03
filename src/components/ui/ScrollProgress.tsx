@@ -23,7 +23,7 @@ export const ScrollProgress: React.FC = () => {
       setSectionIndex(Math.max(0, Math.min(index, SECTIONS.length - 1)));
     });
 
-    return unsubscribe;
+    return () => { unsubscribe(); };
   }, []);
 
   return (
