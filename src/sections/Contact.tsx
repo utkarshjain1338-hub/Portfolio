@@ -1,55 +1,36 @@
-import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import '../styles/global.css';
+import { motion } from 'framer-motion';
+import Button from '../components/Button';
+import SectionLayout from '../components/SectionLayout';
+import { useScrollDirection } from '../hooks/useScrollDirection';
 
-export const Contact: React.FC = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: false, margin: '-100px' });
+const Contact = () => {
+  const isUp = useScrollDirection();
+  const durationMult = isUp ? 0.3 : 1;
 
   return (
-    <section id="contact" className="contact-section" ref={ref}>
-      <div className="container" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        
-        <motion.div className="section-label" initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} style={{ position: 'absolute', top: '100px' }}>
-          07 — CONTACT
-        </motion.div>
-        
-        <div className="grid-12">
-          <div style={{ gridColumn: '1 / 13' }}>
-            <motion.h2 
-              className="section-heading" 
-              style={{ fontSize: 'clamp(60px, 15vw, 240px)', textAlign: 'center', margin: '0' }}
-              initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-            >
-              CONNECT.
-            </motion.h2>
-          </div>
-          
-          <div style={{ gridColumn: '3 / 7', marginTop: '6vw' }}>
-            <motion.div className="contact-block" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.2 }}>
-              <div className="contact-label">EMAIL</div>
-              <a href="mailto:utkarsh.jain.1338@gmail.com" className="contact-link">
-                UTKARSH.JAIN.1338<br/>@GMAIL.COM
-              </a>
-            </motion.div>
-          </div>
-          
-          <div style={{ gridColumn: '9 / 13', marginTop: '10vw' }}>
-            <motion.div className="contact-block" initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.3 }}>
-              <div className="contact-label">NETWORK</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <a href="https://github.com/utkarshjain1338" target="_blank" rel="noreferrer" className="contact-link">GITHUB ↗</a>
-                <a href="https://linkedin.com/in/utkarshjain1338" target="_blank" rel="noreferrer" className="contact-link">LINKEDIN ↗</a>
-              </div>
-            </motion.div>
+    <SectionLayout id="contact" number="03" title="Contact">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: false }}
+        transition={{ duration: 0.8 * durationMult }}
+        className="glass-panel"
+        style={{ width: '100%', maxWidth: '600px', padding: '3rem', textAlign: 'center' }}
+      >
+        <p style={{ marginBottom: '2rem', fontSize: '1.2rem', color: 'rgba(0,0,0,0.7)', lineHeight: 1.6 }}>
+          Whether you have a question or just want to say hi, my inbox is always open. Let's build something amazing together.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <input type="text" placeholder="Your Name" style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-color)', outline: 'none' }} />
+          <input type="email" placeholder="Your Email" style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-color)', outline: 'none' }} />
+          <textarea placeholder="Message" rows={5} style={{ padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-color)', color: 'var(--text-color)', outline: 'none', resize: 'vertical' }}></textarea>
+          <div style={{ marginTop: '1rem', width: '100%', display: 'flex' }}>
+            <Button onClick={() => alert('Message sent!')}>Send Message</Button>
           </div>
         </div>
-      </div>
-      
-      <div className="footer-bar">
-        <span>© 2026 UTKARSH JAIN</span>
-        <span>ALL SYSTEMS NOMINAL</span>
-      </div>
-    </section>
+      </motion.div>
+    </SectionLayout>
   );
 };
+
+export default Contact;

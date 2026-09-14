@@ -1,72 +1,67 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { CursorProvider } from './contexts/CursorContext';
-import { CustomCursor } from './components/ui/CustomCursor';
-import { SystemGraph } from './components/three/SystemGraph';
-import { Nav } from './components/ui/Nav';
-import { LoadingScreen } from './components/ui/LoadingScreen';
-import { ScrollProgress } from './components/ui/ScrollProgress';
-import { Hero } from './sections/Hero';
-import { About } from './sections/About';
-import { Projects } from './sections/Projects';
-import { Exploring } from './sections/Exploring';
-import { Experiments } from './sections/Experiments';
-import { Skills } from './sections/Skills';
-import { Journey } from './sections/Journey';
-import { Contact } from './sections/Contact';
-import { initScroll, setupCameraScrollTrigger } from './lib/scroll';
+import { useEffect, useRef } from 'react';
+import Lenis from 'lenis';
+import { motion, useScroll, useVelocity, useSpring, useTransform } from 'framer-motion';
+import Navbar from './components/Navbar';
+import LoadingScreen from './components/LoadingScreen';
+import Hero from './sections/Hero';
+import About from './sections/About';
+import Projects from './sections/Projects';
+import Contact from './sections/Contact';
 
-const App: React.FC = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+function App() {
+  const lenisRef = useRef<Lenis | null>(null);
+
+  // Framer motion hooks for the 3D bend effect
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  
+  // Map the velocity to a 3D rotation on the X-axis (bending forward)
+  const rotateX = useTransform(smoothVelocity, [-2000, 0, 2000], [1.5, 0, -1.5]);
+  // Add a slight push back (scale down) when scrolling fast to enhance the 3D curve illusion
+  const scale = useTransform(smoothVelocity, [-2000, 0, 2000], [0.99, 1, 0.99]);
 
   useEffect(() => {
-    // Init Lenis smooth scroll
-    initScroll();
+    // Normal free-scrolling Lenis configuration
+    lenisRef.current = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
 
-    // Setup GSAP ScrollTrigger for camera movement
-    if (scrollContainerRef.current) {
-      setupCameraScrollTrigger(scrollContainerRef.current);
+    function raf(time: number) {
+      lenisRef.current?.raf(time);
+      requestAnimationFrame(raf);
     }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenisRef.current?.destroy();
+    };
   }, []);
 
   return (
-    <CursorProvider>
-      <CustomCursor />
-      {/* Loader Sequence */}
-      <LoadingScreen onComplete={() => setIsLoaded(true)} />
-
-      {/* Global Scroll Progress */}
-      <ScrollProgress />
-
-      {/* Fixed Three.js canvas — z-index 0 */}
-      <SystemGraph />
-
-      {/* Fixed nav — z-index 100 */}
-      <Nav />
-
-      {/* Scrollable HTML content — z-index 10 */}
-      <div
-        ref={scrollContainerRef}
-        className="scroll-container"
-        style={{ 
-          position: 'relative', 
-          zIndex: 10,
-          opacity: isLoaded ? 1 : 0, // only show content when loaded
-          transition: 'opacity 1s ease-in-out',
-          pointerEvents: isLoaded ? 'auto' : 'none'
+    <div className="app-container" style={{ perspective: '1200px' }}>
+      <LoadingScreen />
+      <Navbar />
+      
+      {/* Apply the 3D transformations to the main wrapper */}
+      <motion.main
+        style={{
+          rotateX,
+          scale,
+          transformOrigin: 'center center',
+          transformStyle: 'preserve-3d',
+          willChange: 'transform'
         }}
       >
         <Hero />
         <About />
         <Projects />
-        <Exploring />
-        <Experiments />
-        <Skills />
-        <Journey />
         <Contact />
-      </div>
-    </CursorProvider>
+      </motion.main>
+    </div>
   );
-};
+}
 
 export default App;
