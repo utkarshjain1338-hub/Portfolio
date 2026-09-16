@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import { useScrollDirection } from '../hooks/useScrollDirection';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 interface SectionLayoutProps {
   id: string;
@@ -13,10 +14,11 @@ interface SectionLayoutProps {
 
 const SectionLayout = ({ id, number, title, leftRailContent, rightRailContent, children }: SectionLayoutProps) => {
   const isUp = useScrollDirection();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const durationMult = isUp ? 0.3 : 1;
 
   return (
-    <section id={id} style={{ padding: '8rem 5%', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <section id={id} style={{ padding: isMobile ? '4rem 5%' : '8rem 5%', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div className="section-grid">
         
         {/* Left Rail */}

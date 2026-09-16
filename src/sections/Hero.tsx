@@ -150,7 +150,7 @@ const Hero = () => {
           zIndex: 20,
           width: '100%',
           maxWidth: isMobile ? '100vw' : '750px',
-          height: isMobile ? '55vh' : '92vh',
+          height: isMobile ? '85vh' : '92vh',
           opacity: isMobile ? 0.8 : 1
         }}
       >
@@ -192,9 +192,9 @@ const Hero = () => {
         transition={{ duration: 1.5, delay: 4.8 }}
         style={{
           position: 'absolute',
-          top: isMobile ? '28vh' : '45vh',
+          top: isMobile ? '35vh' : '45vh',
           left: '5vw',
-          zIndex: 25,
+          zIndex: 30,
           maxWidth: isMobile ? '90vw' : '400px',
         }}
       >
@@ -208,10 +208,10 @@ const Hero = () => {
         transition={{ duration: 1, delay: 4.5, ease: [0.16, 1, 0.3, 1] }}
         style={{
           position: 'absolute',
-          top: isMobile ? '38vh' : 'auto',
+          top: isMobile ? '28vh' : 'auto',
           bottom: isMobile ? 'auto' : '15vh',
           left: '5vw',
-          zIndex: 25,
+          zIndex: 30,
         }}
       >
         <Typewriter />
