@@ -82,7 +82,7 @@ const About = () => {
       </div>
       
       {/* Vertical Hiragana (Tankyū) */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem', color: 'rgba(0,0,0,0.7)', gap: '0.2rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem', color: 'var(--text-color)', opacity: 0.7, gap: '0.2rem' }}>
         {['た', 'ん', 'き', 'ゅ', 'う'].map((char, i) => (
           <span key={i} style={{ fontSize: '1rem', lineHeight: 1 }}>{char}</span>
         ))}
@@ -104,10 +104,10 @@ const About = () => {
           <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 300, lineHeight: 1.4, color: 'var(--text-color)' }}>
             I'm Utkarsh — a curious builder exploring the space between AI, cybersecurity, and systems.
           </motion.p>
-          <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1.2rem, 2vw, 1.8rem)', fontWeight: 300, lineHeight: 1.5, color: 'rgba(0,0,0,0.7)' }}>
+          <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1.2rem, 2vw, 1.8rem)', fontWeight: 300, lineHeight: 1.5, color: 'var(--text-color)', opacity: 0.7 }}>
             I like understanding what happens beneath the surface — how systems communicate, how they break, and how they can be built better.
           </motion.p>
-          <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, lineHeight: 1.6, color: 'rgba(0,0,0,0.5)' }}>
+          <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, lineHeight: 1.6, color: 'var(--text-color)', opacity: 0.5 }}>
             I'm currently building my foundations across AI/ML, cybersecurity, Linux, and backend development, while turning what I learn into projects and experiments.
           </motion.p>
         </div>
@@ -132,7 +132,7 @@ const About = () => {
                     <span style={{ color: 'var(--accent-color)', fontSize: '0.9rem', fontWeight: 600 }}>{item.num}</span>
                     <span style={{ fontSize: '1.2rem', fontWeight: 500, letterSpacing: '0.1em' }}>{item.title}</span>
                   </div>
-                  <span style={{ fontSize: '0.85rem', color: 'rgba(0,0,0,0.4)', marginLeft: '2.5rem', letterSpacing: '0.05em' }}>{item.sub}</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-color)', opacity: 0.4, marginLeft: '2.5rem', letterSpacing: '0.05em' }}>{item.sub}</span>
                 </li>
               ))}
             </ul>
@@ -160,7 +160,7 @@ const About = () => {
                     </span>
                   </motion.div>
                   {i < arr.length - 1 && (
-                    <motion.div variants={pipelineItemVariants} style={{ width: '2px', height: '20px', background: 'rgba(0,0,0,0.2)', marginLeft: '1rem' }} />
+                    <motion.div variants={pipelineItemVariants} style={{ width: '2px', height: '20px', background: 'var(--text-color)', opacity: 0.2, marginLeft: '1rem' }} />
                   )}
                 </div>
               ))}

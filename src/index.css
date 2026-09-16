@@ -7,8 +7,20 @@
   --accent-hover: #333333;
   --surface-color: rgba(0, 0, 0, 0.05);
   --border-color: rgba(0, 0, 0, 0.1);
+  --nav-bg: rgba(255, 255, 255, 0.8);
   font-family: 'Inter', sans-serif;
   color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --accent-color: #ffffff;
+  --accent-hover: #cccccc;
+  --surface-color: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --nav-bg: rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
 }
 
 * {
@@ -93,11 +105,10 @@ a {
   .section-grid {
     display: flex;
     flex-direction: column;
+    gap: 2rem;
   }
-  .left-rail {
-    margin-bottom: 2rem;
-  }
-  .right-rail {
-    display: none;
+  .left-rail, .right-rail {
+    align-items: center;
+    margin: 1rem 0;
   }
 }

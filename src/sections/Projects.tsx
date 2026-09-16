@@ -1,7 +1,8 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import SectionLayout from '../components/SectionLayout';
 import { useScrollDirection } from '../hooks/useScrollDirection';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const projects = [
   { title: 'DIGITAL TRIPWIRE', category: 'SECURITY', tags: ['REACT', 'THREE.JS'] },
@@ -11,17 +12,10 @@ const projects = [
 ];
 
 const Projects = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const containerRef = useRef<HTMLDivElement>(null);
   const isUp = useScrollDirection();
   const durationMult = isUp ? 0.3 : 1;
-  
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
