@@ -21,18 +21,20 @@ const SectionLayout = ({ id, number, title, leftRailContent, rightRailContent, c
         
         {/* Left Rail */}
         <div className="left-rail">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 0.8 * durationMult, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent-color)', letterSpacing: '0.1em' }}>
-              {number}
-            </span>
-            <div style={{ height: '1px', width: '50px', background: 'var(--border-color)', margin: '0.5rem 0 2rem 0' }} />
-          </motion.div>
-          {leftRailContent}
+          <div style={{ position: 'sticky', top: '20vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, margin: "-100px" }}
+              transition={{ duration: 0.8 * durationMult, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--accent-color)', letterSpacing: '0.1em' }}>
+                {number}
+              </span>
+              <div style={{ height: '1px', width: '50px', background: 'var(--border-color)', margin: '0.5rem 0 2rem 0' }} />
+            </motion.div>
+            {leftRailContent}
+          </div>
         </div>
 
         {/* Center Content */}
@@ -53,7 +55,9 @@ const SectionLayout = ({ id, number, title, leftRailContent, rightRailContent, c
 
         {/* Right Rail */}
         <div className="right-rail">
-          {rightRailContent}
+          <div style={{ position: 'sticky', top: '20vh', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            {rightRailContent}
+          </div>
         </div>
 
       </div>

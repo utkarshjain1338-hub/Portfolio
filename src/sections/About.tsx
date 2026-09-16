@@ -72,11 +72,21 @@ const About = () => {
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: false, margin: "-100px" }}
       transition={{ duration: 0.8 * durationMult, delay: isUp ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginTop: '2rem', position: 'sticky', top: '20vh' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginTop: '2rem' }}
     >
-      <span style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '0.1em', textAlign: 'right' }}>探究</span>
-      <span style={{ fontSize: '1rem', letterSpacing: '0.3em', marginTop: '0.5rem', color: 'rgba(0,0,0,0.7)', textAlign: 'right' }}>TANKYŪ</span>
-      <span style={{ fontSize: '0.8rem', letterSpacing: '0.2em', color: 'var(--accent-color)', marginTop: '0.5rem', textAlign: 'right' }}>EXPLORATION</span>
+      {/* Vertical Kanji */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+        {['探', '究'].map((char, i) => (
+          <span key={i} style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1 }}>{char}</span>
+        ))}
+      </div>
+      
+      {/* Vertical Hiragana (Tankyū) */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem', color: 'rgba(0,0,0,0.7)', gap: '0.2rem' }}>
+        {['た', 'ん', 'き', 'ゅ', 'う'].map((char, i) => (
+          <span key={i} style={{ fontSize: '1rem', lineHeight: 1 }}>{char}</span>
+        ))}
+      </div>
     </motion.div>
   );
 
