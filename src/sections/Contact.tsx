@@ -168,7 +168,7 @@ const Contact = () => {
               { name: 'LINKEDIN', url: 'https://www.linkedin.com/in/utkarsh-jain-066086366/', icon: <FiLinkedin size={20} /> },
               { name: 'TRYHACKME', url: 'https://tryhackme.com/p/Utkarsh99', icon: <FiTerminal size={20} /> },
               { name: 'LEETCODE', url: 'https://leetcode.com/u/UtkarshJain99/', icon: <FiCode size={20} /> },
-              { name: 'https://x.com/UtkarshJain999', url: '#', icon: <FiTwitter size={20} /> }
+              { name: 'X', url: 'https://x.com/UtkarshJain999', icon: <FiTwitter size={20} /> }
             ].map((link) => (
               <motion.a
                 key={link.name}

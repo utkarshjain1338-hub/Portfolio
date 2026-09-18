@@ -5,7 +5,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 import { useScrollDirection } from '../hooks/useScrollDirection';
 
 const projects = [
-  { title: 'LEASE-NFT', category: 'BLOCKCHAIN', tags: ['REACT', 'SOROBAN'], image: '/project1.jpg', url: 'https://lease-nft.vercel.app/' },
+  { title: 'LEASE-NFT', category: 'BLOCKCHAIN', tags: ['REACT', 'SOROBAN'], image: '/project1.png', url: 'https://lease-nft.vercel.app/' },
   { title: 'COMING SOON', category: 'TBD', tags: ['???', '???'], image: '', url: '#' },
 ];
 
