@@ -5,7 +5,8 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 const navLinks = [
   { num: '01', name: 'ABOUT', href: '#about' },
   { num: '02', name: 'WORK', href: '#projects' },
-  { num: '03', name: 'CONTACT', href: '#contact' },
+  { num: '03', name: 'TECH STACK', href: '#techstack' },
+  { num: '04', name: 'CONTACT', href: '#contact' },
 ];
 
 const Navbar = () => {
@@ -35,7 +36,7 @@ const Navbar = () => {
         top: 0,
         left: 0,
         width: '100%',
-        padding: isMobile ? '1rem 5vw' : '1.5rem 3vw',
+        padding: isMobile ? '0.6rem 5vw' : '0.8rem 3vw',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',

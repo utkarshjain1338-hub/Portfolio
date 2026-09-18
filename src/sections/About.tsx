@@ -4,8 +4,8 @@ import { useScrollDirection } from '../hooks/useScrollDirection';
 
 const About = () => {
   const isUp = useScrollDirection();
-  const durationMult = isUp ? 0.2 : 1; 
-  const staggerMult = isUp ? 0 : 1;    
+  const durationMult = isUp ? 0.2 : 1;
+  const staggerMult = isUp ? 0 : 1;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -47,7 +47,7 @@ const About = () => {
         }}
       />
       {/* Sword */}
-      <motion.img 
+      <motion.img
         src="/sword.png"
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -67,7 +67,7 @@ const About = () => {
   );
 
   const motifElement = (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: 20 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: false, margin: "-100px" }}
@@ -80,7 +80,7 @@ const About = () => {
           <span key={i} style={{ fontSize: '3rem', fontWeight: 900, lineHeight: 1 }}>{char}</span>
         ))}
       </div>
-      
+
       {/* Vertical Hiragana (Tankyū) */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1rem', color: 'var(--text-color)', opacity: 0.7, gap: '0.2rem' }}>
         {['た', 'ん', 'き', 'ゅ', 'う'].map((char, i) => (
@@ -114,7 +114,7 @@ const About = () => {
 
         {/* Grid: What I Explore & How I Build */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '4rem' }}>
-          
+
           {/* What I Explore */}
           <motion.div variants={itemVariants} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -144,8 +144,8 @@ const About = () => {
               <div style={{ width: '8px', height: '8px', border: '1px solid var(--accent-color)', transform: 'rotate(45deg)' }} />
               <h3 style={{ fontSize: '1rem', letterSpacing: '0.2em', fontWeight: 600 }}>HOW I BUILD</h3>
             </div>
-            
-            <motion.div 
+
+            <motion.div
               variants={pipelineVariants}
               initial="hidden"
               whileInView="visible"

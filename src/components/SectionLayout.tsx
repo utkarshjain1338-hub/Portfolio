@@ -6,7 +6,7 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 interface SectionLayoutProps {
   id: string;
   number: string;
-  title: string;
+  title?: string;
   leftRailContent?: ReactNode;
   rightRailContent?: ReactNode;
   children: ReactNode;
@@ -41,17 +41,19 @@ const SectionLayout = ({ id, number, title, leftRailContent, rightRailContent, c
 
         {/* Center Content */}
         <div className="center-rail">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 0.8 * durationMult, ease: [0.16, 1, 0.3, 1] }}
-            style={{ marginBottom: '4rem' }}
-          >
-            <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-              {title}
-            </h2>
-          </motion.div>
+          {title && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "-100px" }}
+              transition={{ duration: 0.8 * durationMult, ease: [0.16, 1, 0.3, 1] }}
+              style={{ marginBottom: '4rem' }}
+            >
+              <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 300, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                {title}
+              </h2>
+            </motion.div>
+          )}
           {children}
         </div>
 

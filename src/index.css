@@ -73,7 +73,7 @@ a {
 /* 3-Rail Editorial Grid */
 .section-grid {
   display: grid;
-  grid-template-columns: 2fr 8fr 2fr;
+  grid-template-columns: 1fr 10fr 1fr;
   gap: 2rem;
   width: 100%;
   max-width: 1600px;
