@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import LoadingScreen from './components/LoadingScreen';
 import Hero from './sections/Hero';
@@ -42,6 +43,7 @@ function App() {
         <TechStack />
         <Contact />
       </main>
+      <Analytics />
     </div>
   );
 }
