@@ -102,10 +102,10 @@ const About = () => {
         {/* Philosophy / Bio */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', maxWidth: '800px' }}>
           <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 300, lineHeight: 1.4, color: 'var(--text-color)' }}>
-            I'm Utkarsh — a curious builder exploring the space between AI, cybersecurity, and systems.
+            I'm Utkarsh a curious builder exploring the space between AI, cybersecurity, and systems.
           </motion.p>
           <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1.2rem, 2vw, 1.8rem)', fontWeight: 300, lineHeight: 1.5, color: 'var(--text-color)', opacity: 0.7 }}>
-            I like understanding what happens beneath the surface — how systems communicate, how they break, and how they can be built better.
+            I like understanding what happens beneath the surface how systems communicate, how they break, and how they can be built better.
           </motion.p>
           <motion.p variants={itemVariants} style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, lineHeight: 1.6, color: 'var(--text-color)', opacity: 0.5 }}>
             I'm currently building my foundations across AI/ML, cybersecurity, Linux, and backend development, while turning what I learn into projects and experiments.
