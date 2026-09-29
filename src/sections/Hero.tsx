@@ -1,6 +1,8 @@
-import { AnimatePresence, motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useTransform, useScroll, useSpring } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { useGlobalMouse } from '../contexts/MouseContext';
+import { HeroBg } from '../components/backgrounds/HeroBg';
 
 const greetings = ["はじめまして.", "Namaste.", "Welcome."];
 const quotes = ['"A BUG IS AN UNDOCUMENTED FEATURE"', '"このバグは文書化されていない機能です"'];
@@ -108,8 +110,23 @@ const Hero = () => {
     mouseY.set(-1000);
   };
 
+  // Tiny Parallax for giant 00 text
+  const { smoothMouseX, smoothMouseY } = useGlobalMouse();
+  const titleX = useTransform(smoothMouseX, [-1, 1], [-2, 2]);
+  const titleY = useTransform(smoothMouseY, [-1, 1], [-2, 2]);
+
   return (
-    <section id="hero" style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+    <section id="hero" style={{ backgroundColor: 'var(--bg-tone-1)', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+
+      {/* Giant Background Typography */}
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <motion.span style={{ x: titleX, y: titleY, fontSize: 'clamp(10rem, 30vw, 40rem)', fontWeight: 900, color: 'var(--text-color)', opacity: 0.02, whiteSpace: 'nowrap', userSelect: 'none', letterSpacing: '-0.05em', marginLeft: '-5vw', willChange: 'transform' }}>
+          00
+        </motion.span>
+      </div>
+
+      {/* Layer 3 Background Geometry */}
+      <HeroBg />
 
       {/* 1. Name typography */}
       <div style={{ position: 'absolute', top: isMobile ? '12vh' : '15vh', left: '5vw', zIndex: 10, display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0' : '3vw', pointerEvents: 'none' }}>

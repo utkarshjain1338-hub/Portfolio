@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import SectionLayout from '../components/SectionLayout';
 import { useScrollDirection } from '../hooks/useScrollDirection';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { TechBg } from '../components/backgrounds/TechBg';
 
 const stackData = [
   {
@@ -94,8 +95,42 @@ const TechStack = () => {
     </motion.div>
   );
 
+  const fruitElement = (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 'fit-content', marginLeft: '-60px', marginTop: '-1rem' }}>
+      <motion.div
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: false }}
+        transition={{ duration: 0.8 * durationMult, delay: isUp ? 0 : 0.2 }}
+        style={{
+          width: '1px',
+          height: '100px',
+          background: 'var(--text-color)',
+          opacity: 0.4,
+          transformOrigin: 'top'
+        }}
+      />
+      <motion.img
+        src="/luffy-fruit.png"
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: false, margin: "-100px" }}
+        transition={{ duration: 1 * durationMult, delay: isUp ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          width: '110px',
+          maxHeight: '600px',
+          objectFit: 'contain',
+          objectPosition: 'top center',
+          zIndex: 0,
+          pointerEvents: 'none',
+          marginTop: '-5px'
+        }}
+      />
+    </div>
+  );
+
   return (
-    <SectionLayout id="techstack" number="03" title="Tech Stack" rightRailContent={motifElement}>
+    <SectionLayout id="tech" number="03" title="Tech Stack" leftRailContent={fruitElement} rightRailContent={motifElement} bgTone="var(--bg-tone-2)" bgText="03" bgElement={<TechBg />}>
       <div style={{ width: '100%', maxWidth: '1200px' }}>
         
         {/* Top Border Line */}

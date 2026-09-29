@@ -9,6 +9,8 @@ const projects = [
   { title: 'COMING SOON', category: 'TBD', tags: ['???', '???'], image: '', url: '#' },
 ];
 
+import { ProjectsBg } from '../components/backgrounds/ProjectsBg';
+
 const Projects = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -99,7 +101,7 @@ const Projects = () => {
   );
 
   return (
-    <SectionLayout id="projects" number="02" title="Projects" leftRailContent={kunaiElement} rightRailContent={motifElement}>
+    <SectionLayout id="projects" number="02" title="Projects" leftRailContent={kunaiElement} rightRailContent={motifElement} bgTone="var(--bg-tone-3)" bgText="02" bgElement={<ProjectsBg />}>
       {/* 300vh scroll track */}
       <div ref={containerRef} style={{ height: '300vh', position: 'relative', marginTop: '-4rem' }}>
 

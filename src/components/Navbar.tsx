@@ -4,8 +4,8 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 
 const navLinks = [
   { num: '01', name: 'ABOUT', href: '#about' },
-  { num: '02', name: 'WORK', href: '#projects' },
-  { num: '03', name: 'TECH STACK', href: '#techstack' },
+  { num: '02', name: 'PROJECTS', href: '#projects' },
+  { num: '03', name: 'TECH STACK', href: '#tech' },
   { num: '04', name: 'CONTACT', href: '#contact' },
 ];
 
@@ -27,7 +27,7 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -36,7 +36,7 @@ const Navbar = () => {
         top: 0,
         left: 0,
         width: '100%',
-        padding: isMobile ? '0.6rem 5vw' : '0.8rem 3vw',
+        padding: isMobile ? '1rem 5vw' : '1.5rem 3vw',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -48,7 +48,7 @@ const Navbar = () => {
       }}
     >
       {/* Logo */}
-      <motion.div 
+      <motion.div
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         style={{ fontSize: isMobile ? '1.4rem' : '1.8rem', fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '-0.02em', cursor: 'pointer' }}
@@ -57,43 +57,36 @@ const Navbar = () => {
       </motion.div>
 
       {/* Links & Toggle */}
-      <div style={{ display: 'flex', gap: isMobile ? '1.5rem' : '3vw', alignItems: 'center', fontSize: isMobile ? '0.7rem' : '0.85rem', fontWeight: 600, letterSpacing: '0.1em' }}>
-        {navLinks.map((link, i) => (
-          <motion.a 
-            key={link.num} 
-            href={link.href}
-            initial="initial"
-            whileHover="hover"
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center',
-              gap: '0.5rem',
-              overflow: 'hidden', 
-              padding: '0.5rem 0',
-              cursor: 'pointer'
-            }}
-          >
-            <span style={{ opacity: 0.4, fontSize: '0.75rem' }}>{link.num}</span>
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-              <motion.span 
-                variants={{ initial: { y: 0 }, hover: { y: '-100%' } }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {link.name}
-              </motion.span>
-              <motion.span 
-                variants={{ initial: { y: '100%' }, hover: { y: 0 } }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                style={{ position: 'absolute', top: 0, left: 0, color: 'var(--text-color)', fontWeight: 800 }}
-              >
-                {link.name}
-              </motion.span>
-            </div>
-          </motion.a>
-        ))}
-        
+      <div style={{ display: 'flex', gap: isMobile ? '0.6rem' : '3vw', alignItems: 'center', fontSize: isMobile ? '0.65rem' : '0.85rem', fontWeight: 600, letterSpacing: isMobile ? '0.05em' : '0.1em' }}>
+        {navLinks.map((link) => {
+          let displayName = link.name;
+          if (isMobile) {
+            if (displayName === 'TECH STACK') displayName = 'TECH';
+            if (displayName === 'PROJECTS') displayName = 'WORK';
+          }
+          return (
+            <motion.a
+              key={link.num}
+              href={link.href}
+              whileHover={{ y: -2 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                padding: '0.5rem 0',
+                cursor: 'pointer',
+                color: 'var(--text-color)',
+                textDecoration: 'none'
+              }}
+            >
+              {!isMobile && <span style={{ opacity: 0.4, fontSize: '0.75rem' }}>{link.num}</span>}
+              <span>{displayName}</span>
+            </motion.a>
+          );
+        })}
+
         {/* Dark Mode Toggle */}
-        <motion.button 
+        <motion.button
           onClick={toggleTheme}
           whileHover={{ rotate: 180, scale: 1.1 }}
           whileTap={{ scale: 0.9 }}

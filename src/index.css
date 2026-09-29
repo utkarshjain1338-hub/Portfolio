@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500&display=swap');
 
 :root {
-  --bg-color: #ffffff;
+  --bg-color: #F3F2EF;
+  --bg-tone-1: #F3F2EF;
+  --bg-tone-2: #EBEAE5;
+  --bg-tone-3: #E4E3DD;
   --text-color: #000000;
   --accent-color: #000000;
   --accent-hover: #333333;
@@ -14,6 +17,9 @@
 
 :root[data-theme='dark'] {
   --bg-color: #000000;
+  --bg-tone-1: #000000;
+  --bg-tone-2: #070707;
+  --bg-tone-3: #0F0F0F;
   --text-color: #ffffff;
   --accent-color: #ffffff;
   --accent-hover: #cccccc;

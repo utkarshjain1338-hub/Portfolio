@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { FiCode, FiGithub, FiLinkedin, FiMail, FiTerminal, FiTwitter } from 'react-icons/fi';
+import { ContactBg } from '../components/backgrounds/ContactBg';
 import SectionLayout from '../components/SectionLayout';
 import { useMediaQuery } from '../hooks/useMediaQuery';
 
@@ -68,8 +69,42 @@ const Contact = () => {
     </motion.div>
   );
 
+  const cloudElement = (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 'fit-content', marginLeft: '-60px', marginTop: '-1rem' }}>
+      <motion.div
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        style={{
+          width: '1px',
+          height: '100px',
+          background: 'var(--text-color)',
+          opacity: 0.4,
+          transformOrigin: 'top'
+        }}
+      />
+      <motion.img
+        src="/cloud-trans.png"
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          width: '110px',
+          maxHeight: '600px',
+          objectFit: 'contain',
+          objectPosition: 'top center',
+          zIndex: 0,
+          pointerEvents: 'none',
+          marginTop: '-5px'
+        }}
+      />
+    </div>
+  );
+
   return (
-    <SectionLayout id="contact" number="04" rightRailContent={motifElement}>
+    <SectionLayout id="contact" number="04" leftRailContent={cloudElement} rightRailContent={motifElement} bgTone="var(--bg-tone-1)" bgText="04" bgElement={<ContactBg />}>
       <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
 
         {/* Massive Typography Header */}

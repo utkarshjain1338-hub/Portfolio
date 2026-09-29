@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { Analytics } from '@vercel/analytics/react';
+import { MouseProvider } from './contexts/MouseContext';
 import Navbar from './components/Navbar';
 import LoadingScreen from './components/LoadingScreen';
 import Hero from './sections/Hero';
@@ -32,10 +33,20 @@ function App() {
   }, []);
 
   return (
-    <div className="app-container">
-      <LoadingScreen />
+    <MouseProvider>
+      <div className="app-container">
+        <LoadingScreen />
       <Navbar />
       
+      {/* Global Construction Lines */}
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: -1, display: 'flex', justifyContent: 'center', padding: '0 5%' }}>
+        <div className="section-grid" style={{ height: '100vh', opacity: 0.5 }}>
+          <div style={{ borderRight: '1px solid var(--border-color)' }} />
+          <div style={{ borderRight: '1px solid var(--border-color)' }} />
+          <div />
+        </div>
+      </div>
+
       <main>
         <Hero />
         <About />
@@ -44,7 +55,8 @@ function App() {
         <Contact />
       </main>
       <Analytics />
-    </div>
+      </div>
+    </MouseProvider>
   );
 }
 

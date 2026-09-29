@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import SectionLayout from '../components/SectionLayout';
 import { useScrollDirection } from '../hooks/useScrollDirection';
+import { AboutBg } from '../components/backgrounds/AboutBg';
 
 const About = () => {
   const isUp = useScrollDirection();
@@ -91,7 +92,7 @@ const About = () => {
   );
 
   return (
-    <SectionLayout id="about" number="01" title="About" leftRailContent={swordElement} rightRailContent={motifElement}>
+    <SectionLayout id="about" number="01" title="About" leftRailContent={swordElement} rightRailContent={motifElement} bgTone="var(--bg-tone-2)" bgText="01" bgElement={<AboutBg />}>
       <motion.div
         variants={containerVariants}
         initial="hidden"
