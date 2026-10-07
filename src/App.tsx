@@ -10,6 +10,10 @@ import Projects from './sections/Projects';
 import TechStack from './sections/TechStack';
 import Contact from './sections/Contact';
 
+import { CustomCursor } from './components/CustomCursor';
+import { NoiseOverlay } from './components/NoiseOverlay';
+import { GlobalBackground } from './components/GlobalBackground';
+
 function App() {
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -34,6 +38,9 @@ function App() {
 
   return (
     <MouseProvider>
+      <GlobalBackground />
+      <NoiseOverlay />
+      <CustomCursor />
       <div className="app-container">
         <LoadingScreen />
       <Navbar />

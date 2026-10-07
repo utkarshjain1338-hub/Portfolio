@@ -7,6 +7,8 @@ interface MouseContextType {
   mouseY: MotionValue<number>;
   smoothMouseX: MotionValue<number>;
   smoothMouseY: MotionValue<number>;
+  rawMouseX: MotionValue<number>;
+  rawMouseY: MotionValue<number>;
 }
 
 const MouseContext = createContext<MouseContextType | null>(null);
@@ -16,6 +18,8 @@ export const MouseProvider = ({ children }: { children: ReactNode }) => {
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const rawMouseX = useMotionValue(0);
+  const rawMouseY = useMotionValue(0);
 
   // Smooth springs for buttery parallax
   const smoothMouseX = useSpring(mouseX, { damping: 50, stiffness: 400 });
@@ -25,7 +29,11 @@ export const MouseProvider = ({ children }: { children: ReactNode }) => {
     if (isMobile) return; // Disable on mobile for performance
 
     const handleMouseMove = (e: MouseEvent) => {
-      // Normalize to -1 to 1 based on screen center
+      // Raw pixels for cursor
+      rawMouseX.set(e.clientX);
+      rawMouseY.set(e.clientY);
+
+      // Normalize to -1 to 1 based on screen center for parallax
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
       mouseX.set(x);
@@ -34,10 +42,10 @@ export const MouseProvider = ({ children }: { children: ReactNode }) => {
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isMobile, mouseX, mouseY]);
+  }, [isMobile, mouseX, mouseY, rawMouseX, rawMouseY]);
 
   return (
-    <MouseContext.Provider value={{ mouseX, mouseY, smoothMouseX, smoothMouseY }}>
+    <MouseContext.Provider value={{ mouseX, mouseY, smoothMouseX, smoothMouseY, rawMouseX, rawMouseY }}>
       {children}
     </MouseContext.Provider>
   );

@@ -153,7 +153,7 @@ const Contact = () => {
           </div>
 
           {/* Column 2: Links */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative', zIndex: 10, paddingBottom: isMobile ? '8rem' : '0' }}>
 
             <motion.span variants={listItemVariants} style={{ fontSize: '1rem', letterSpacing: '0.2em', fontWeight: 600, opacity: 0.5, marginBottom: '0.5rem', willChange: 'transform, opacity' }}>
               AROUND THE WEB

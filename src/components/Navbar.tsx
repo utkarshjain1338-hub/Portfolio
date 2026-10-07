@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '../hooks/useMediaQuery';
+import { Magnetic } from './Magnetic';
 
 const navLinks = [
   { num: '01', name: 'ABOUT', href: '#about' },
@@ -12,6 +13,7 @@ const navLinks = [
 const Navbar = () => {
   const [theme, setTheme] = useState('light');
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { scrollYProgress } = useScroll();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -65,51 +67,69 @@ const Navbar = () => {
             if (displayName === 'PROJECTS') displayName = 'WORK';
           }
           return (
-            <motion.a
-              key={link.num}
-              href={link.href}
-              whileHover={{ y: -2 }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                padding: '0.5rem 0',
-                cursor: 'pointer',
-                color: 'var(--text-color)',
-                textDecoration: 'none'
-              }}
-            >
-              {!isMobile && <span style={{ opacity: 0.4, fontSize: '0.75rem' }}>{link.num}</span>}
-              <span>{displayName}</span>
-            </motion.a>
+            <Magnetic key={link.num} strength={30} damping={10}>
+              <motion.a
+                href={link.href}
+                whileHover={{ y: -2 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  padding: '0.5rem 0',
+                  cursor: 'pointer',
+                  color: 'var(--text-color)',
+                  textDecoration: 'none'
+                }}
+              >
+                {!isMobile && <span style={{ opacity: 0.4, fontSize: '0.75rem' }}>{link.num}</span>}
+                <span>{displayName}</span>
+              </motion.a>
+            </Magnetic>
           );
         })}
 
         {/* Dark Mode Toggle */}
-        <motion.button
-          onClick={toggleTheme}
-          whileHover={{ rotate: 180, scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ duration: 0.5, type: 'spring' }}
-          style={{
-            background: 'transparent',
-            border: '1px solid var(--border-color)',
-            color: 'var(--text-color)',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            marginLeft: '1vw'
-          }}
-          aria-label="Toggle Dark Mode"
-        >
-          {theme === 'light' ? '●' : '○'}
-        </motion.button>
+        <Magnetic strength={20}>
+          <motion.button
+            onClick={toggleTheme}
+            whileHover={{ rotate: 180, scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.5, type: 'spring' }}
+            style={{
+              background: 'transparent',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-color)',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              marginLeft: '1vw'
+            }}
+            aria-label="Toggle Dark Mode"
+          >
+            {theme === 'light' ? '●' : '○'}
+          </motion.button>
+        </Magnetic>
       </div>
+      
+      {/* Scroll Progress Bar */}
+      <motion.div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: 'var(--text-color)',
+          scaleX: scrollYProgress,
+          transformOrigin: 'left',
+          zIndex: 101,
+        }}
+      />
     </motion.nav>
   );
 };
